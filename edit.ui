@@ -37,7 +37,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="spinBox">
+      <widget class="QSpinBox" name="id_inp">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -187,6 +187,19 @@
     </property>
     <property name="text">
      <string>OK</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="error_label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>470</y>
+      <width>241</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
