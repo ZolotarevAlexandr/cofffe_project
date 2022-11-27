@@ -6,17 +6,19 @@ from PyQt5 import uic
 
 import sqlite3
 
+from ui import main_ui, edit_ui
+
 import cgitb
 cgitb.enable(format='text')
 
 
-class CoffeeTableView(QMainWindow):
+class CoffeeTableView(QMainWindow, main_ui.Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('main.ui', self)
+        self.setupUi(self)
 
         db = QSqlDatabase.addDatabase('QSQLITE')
-        db.setDatabaseName('coffee_db.sqlite')
+        db.setDatabaseName('data/coffee_db.sqlite')
         db.open()
 
         model = QSqlTableModel(self, db)
@@ -32,10 +34,10 @@ class CoffeeTableView(QMainWindow):
         self.close()
 
 
-class EditView(QMainWindow):
+class EditView(QMainWindow, edit_ui.Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('edit.ui', self)
+        self.setupUi(self)
 
         self.ok_btn.clicked.connect(self.save_changes)
         self.id_inp.valueChanged.connect(self.set_selected)
@@ -50,14 +52,14 @@ class EditView(QMainWindow):
         new_price = int(self.price_inp.text())
         new_size = int(self.size_inp.text())
 
-        with sqlite3.connect('coffee_db.sqlite') as con:
+        with sqlite3.connect('data/coffee_db.sqlite') as con:
             cur = con.cursor()
             max_id = cur.execute(f"""
             SELECT id FROM coffee
             ORDER BY id DESC
             """).fetchone()
 
-        with sqlite3.connect('coffee_db.sqlite') as con:
+        with sqlite3.connect('data/coffee_db.sqlite') as con:
             cur = con.cursor()
             if id_of_element <= max_id[0]:
                 cur.execute(f"""
@@ -89,7 +91,7 @@ class EditView(QMainWindow):
 
     def set_selected(self):
         id_of_element = self.id_inp.value()
-        with sqlite3.connect('coffee_db.sqlite') as con:
+        with sqlite3.connect('data/coffee_db.sqlite') as con:
             cur = con.cursor()
             result = cur.execute(f"""
             SELECT * FROM coffee
