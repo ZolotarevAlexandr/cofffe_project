@@ -1,43 +1,42 @@
 import sys
 
 from PyQt5.QtSql import QSqlDatabase, QSqlTableModel
-from PyQt5.QtWidgets import QWidget, QTableView, QApplication
+from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5 import uic
+
+import cgitb
+cgitb.enable(format='text')
 
 
-class Example(QWidget):
+class CoffeeTableView(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.initUI()
+        uic.loadUi('main.ui', self)
 
-    def initUI(self):
-        # Зададим тип базы данных
         db = QSqlDatabase.addDatabase('QSQLITE')
-        # Укажем имя базы данных
         db.setDatabaseName('coffee_db.sqlite')
-        # И откроем подключение
         db.open()
 
-        # QTableView - виджет для отображения данных из базы
-        view = QTableView(self)
-        # Создадим объект QSqlTableModel,
-        # зададим таблицу, с которой он будет работать,
-        #  и выберем все данные
         model = QSqlTableModel(self, db)
         model.setTable('coffee')
         model.select()
+        self.tableView.setModel(model)
 
-        # Для отображения данных на виджете
-        # свяжем его и нашу модель данных
-        view.setModel(model)
-        view.move(10, 10)
-        view.resize(617, 315)
+        self.edit_btn.clicked.connect(self.open_edit)
 
-        self.setGeometry(300, 100, 650, 450)
-        self.setWindowTitle('Пример работы с QtSql')
+    def open_edit(self):
+        self.edit_window = EditView()
+        self.edit_window.show()
+
+
+class EditView(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('edit.ui', self)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Example()
+    ex = CoffeeTableView()
     ex.show()
     sys.exit(app.exec())
